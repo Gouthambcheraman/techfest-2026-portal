@@ -1,11 +1,14 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
 const requireAuth = require("../middleware/auth");
 
 const isProd = process.env.NODE_ENV === "production";
+const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, standardHeaders: true, legacyHeaders: false });
+const registerLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, standardHeaders: true, legacyHeaders: false });
 
 // httpOnly: JS cannot read it (XSS can't steal the token)
 // secure:   only sent over HTTPS
@@ -30,6 +33,7 @@ const passwordRule = body("password").isString().withMessage("Password must be t
 
 router.post(
   "/register",
+  registerLimiter,
   body("name").isString().trim().isLength({ min: 2, max: 60 }).escape().withMessage("Name must be 2-60 characters"),
   emailRule,
   passwordRule,
@@ -47,19 +51,30 @@ router.post(
   }
 );
 
-router.post("/login", emailRule, passwordRule, validate, async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    const ok = user && (await bcrypt.compare(password, user.password));
-    if (!ok) return res.status(401).json({ error: "Invalid email or password" });
+router.post(
+  "/login",
+  loginLimiter,
+  emailRule,
+  passwordRule,
+  validate,
+  async (req, res, next) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      const ok = user && (await bcrypt.compare(password, user.password));
+      if (!ok) return res.status(401).json({ error: "Invalid email or password" });
 
-    const token = jwt.sign({ id: user._id, name: user.name }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.cookie("token", token, cookieOptions).json({ id: user._id, name: user.name, email: user.email });
-  } catch (err) {
-    next(err);
+      const token = jwt.sign(
+        { id: String(user._id), name: user.name },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h", algorithm: "HS256" }
+      );
+      res.cookie("token", token, cookieOptions).json({ id: user._id, name: user.name, email: user.email });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 router.post("/logout", (req, res) => {
   res.clearCookie("token", { ...cookieOptions, maxAge: undefined }).json({ ok: true });
