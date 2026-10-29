@@ -1,3 +1,3 @@
 # Documentation merge-conflict exercise
 
-Resolution note: Keep branch A wording.
+Resolution note: Keep the final wording clear and neutral.
