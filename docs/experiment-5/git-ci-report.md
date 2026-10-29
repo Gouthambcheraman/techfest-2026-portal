@@ -90,7 +90,8 @@ Recorded results:
 
 - Backend: 16 Jest/Supertest tests passed.
 - Frontend: Vite production build passed.
-- Git: verify `git diff --check`, branch graph, and clean working tree after local commits.
+- Git: `git diff --check` passed; the feature merge and conflict-resolution merge are visible in the branch graph; the working tree is clean on `develop`.
+- Branches: `main` remains at `47673ab`; `develop` includes feature merge `48d4620` and conflict-demo merge `b47a3c0`; `feature/ci-pipeline`, `demo/conflict-a`, and `demo/conflict-b` are retained locally.
 - GitHub Actions: not observed in GitHub during this exercise because changes are not pushed.
 
 ## Screenshot checklist
@@ -100,4 +101,3 @@ Recorded results:
 - [ ] The merge-conflict markers in the documentation file before resolution.
 - [ ] The resolved documentation line and the conflict-resolution commit.
 - [ ] A passing backend test job and frontend build job in GitHub Actions after a future push.
-
