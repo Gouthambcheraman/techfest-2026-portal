@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" fill="none">
+  <defs><linearGradient id="a" x1="360" y1="0" x2="360" y2="480" gradientUnits="userSpaceOnUse"><stop stop-color="#32304B"/><stop offset="1" stop-color="#9B4C65"/></linearGradient></defs>
+  <path fill="url(#a)" d="M0 0h720v480H0z"/><path d="M76 78h568v215H76z" fill="#202539"/><path d="M98 98h524v172H98z" fill="#D3F36B"/>
+  <path d="M119 118h482v132H119z" fill="#233545"/><text x="360" y="204" fill="#F4F3EE" font-family="sans-serif" font-size="54" font-weight="700" text-anchor="middle">QUIZ NIGHT</text>
+  <path d="M0 350c150-62 251-56 361-12 117 47 229 40 359-15v157H0V350Z" fill="#171D2A"/>
+  <circle cx="171" cy="328" r="34" fill="#F1C39A"/><path d="M127 427c5-48 18-72 44-72 27 0 41 24 46 72h-90Z" fill="#FF704C"/>
+  <circle cx="290" cy="315" r="34" fill="#B77454"/><path d="M245 427c7-55 19-78 45-78 27 0 41 25 48 78h-93Z" fill="#D3F36B"/>
+  <circle cx="427" cy="318" r="34" fill="#E5B485"/><path d="M381 427c6-52 20-76 46-76 27 0 41 24 46 76h-92Z" fill="#75BFC0"/>
+  <circle cx="554" cy="330" r="34" fill="#9E654F"/><path d="M509 427c6-49 19-72 45-72 27 0 41 24 46 72h-91Z" fill="#E7D7BF"/>
+  <path d="M98 448h524" stroke="#D3F36B" stroke-opacity=".5" stroke-width="2"/><path d="m361 24 8 20 21 2-16 13 5 20-18-11-18 11 6-20-17-13 21-2 8-20Z" fill="#FF704C"/>
+</svg>
