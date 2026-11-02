@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: techfest-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_ORIGIN
+        value: https://techfest-web.onrender.com
+
+  - type: static
+    name: techfest-web
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://techfest-api.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
