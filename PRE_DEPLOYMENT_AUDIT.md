@@ -58,11 +58,12 @@
 | Render service configuration | PASS | Added `render.yaml` for separate API/static services, health checks, static publish path, SPA fallback, and required environment variables; configuration has not been applied in Render. |
 | Frontend production API URL configuration | PASS | Axios uses `VITE_API_BASE_URL` when set and retains `/api` as the development/default value; credentialed requests remain enabled. |
 | GitHub repository inspection | PASS | Confirmed the specified GitHub repository was empty before initializing local Git; no remote history was overwritten. |
-| GitHub push | BLOCKED | Pending creation and verification of the initial commit. |
-| Git secret exclusion | BLOCKED | Pending initialization of Git and verification of the commit contents. |
+| GitHub push | PASS | Pushed initial commit `116a6b747944ed5cdbb1c42eeca60b23c1ae2cd4` to branch `main`; remote tracking is configured. |
+| Git secret exclusion | PASS | The commit contains no `.env`, credentials, generated build/dependency output, or sensitive-key pattern matches. `.env`, `server/.env`, `node_modules/`, `dist/`, and TypeScript build metadata are ignored. |
+| GitHub remote verification | PASS | The remote `main` branch tracks the pushed local commit; no force push was used. |
 | Lint | BLOCKED | No lint script or linter configuration exists. |
-| Repository secret-history check | BLOCKED | This workspace has no Git metadata, so tracked files and commit history could not be inspected. |
-| Production deployment/TLS | BLOCKED | No production host, HTTPS endpoint, deployment configuration, or production environment was available to test. |
+| Prior secret-history verification | BLOCKED | The requested GitHub repository was empty before this initial commit; history outside this repository cannot be verified. |
+| Production deployment/TLS | BLOCKED | Render configuration is prepared but not applied; no production host, HTTPS endpoint, or production environment was available to test. |
 
 Browser checks observed HTTP 401 console resource warnings from the expected unauthenticated `GET /api/auth/me` session checks. The login state and protected routes behaved as expected; no broken gallery images were found.
 
@@ -76,7 +77,7 @@ Browser checks observed HTTP 401 console resource warnings from the expected una
 
 - **Production target is not verified.** The code explicitly targets `techfestdb` and Render configuration is prepared, but the live production environment remains unverified. Set `NODE_ENV=production` and the exact HTTPS `FRONTEND_ORIGIN` before deployment.
 - **Deployment is not verified.** The API/static Render services are configured in `render.yaml`, but production service creation, TLS, static-to-API connectivity, and Secure-cookie behavior have not been tested.
-- **Credential hygiene:** At audit start, `details.md` contained credential material. The file was removed, and the local JWT secret in `.env` was rotated without printing it. A MongoDB account password was not changed because that can affect other clients and requires provider-side coordination. Rotate it there if it is real or was shared. Since the workspace has no Git metadata, whether the removed file was ever tracked cannot be verified.
+- **Credential hygiene:** At audit start, `details.md` contained credential material. The file was removed, and the local JWT secret in `.env` was rotated without printing it. The specified GitHub repository was empty before the initial commit, which excludes prior remote history there; exposure elsewhere cannot be verified. A MongoDB account password was not changed because that can affect other clients and requires provider-side coordination. Rotate it through Atlas if it is real or was shared.
 
 ### Medium priority
 
@@ -86,7 +87,7 @@ Browser checks observed HTTP 401 console resource warnings from the expected una
 ### Low priority
 
 - Expected unauthenticated `/api/auth/me` checks appear as HTTP 401 resource warnings in browser console tooling.
-- The GitHub repository was empty when inspected; until the initial commit and push are verified, commit contents and remote state are not confirmed.
+- Exposure history outside the now-initialized project and the specified empty GitHub repository cannot be verified.
 
 ## Fixes Applied
 
@@ -96,6 +97,7 @@ Browser checks observed HTTP 401 console resource warnings from the expected una
 - Documented production environment requirements in `README.md`.
 - Added `render.yaml` for distinct API and frontend services, and made the frontend API URL configurable with `VITE_API_BASE_URL` while keeping the `/api` development default and credentialed requests.
 - Updated `.gitignore` to exclude TypeScript build metadata and log files.
+- Initialized Git on `main`, verified the requested GitHub repository was empty, excluded secrets/generated files, and pushed the initial commit without force.
 - Removed the credential-bearing `details.md` file and rotated the local JWT secret in the ignored `.env`, without displaying either secret. Existing tokens signed with the previous local JWT secret are no longer valid.
 - Started the API against Atlas and confirmed it initializes before listening. Repeated initialization twice without duplicate collections.
 - Ran 18 live API/MongoDB integration checks. Removed only the uniquely identified audit user and its owned feedback; both final collection counts were zero.
